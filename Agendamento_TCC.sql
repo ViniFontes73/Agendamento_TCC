@@ -72,3 +72,28 @@ CREATE INDEX fk_Agenda_Defesa_Alunos1_idx ON Agendamento_TCC.Agenda_Defesa (Alun
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+
+/* Foi feito um alter table para alterar o formato de uma coluna
+ para que fosse capaz de distinguir e conseguir rodar um update ou delete com mais segurança*/
+ALTER TABLE sala_defesa
+MODIFY codigo_sala INT AUTO_INCREMENT;
+
+
+
+/* ------------- View para visualizar dpeois. -----------------  */
+CREATE VIEW AgendaView AS
+SELECT
+    ag.codigo_agendamento AS Codigo_Agendamento,
+    sd.nome_sala AS Nome_Sala,
+    sd.local AS Local,
+    sd.hora AS Hora,
+    DATE_FORMAT(sd.data, '%d/%m/%Y') AS Data,
+    p.nome AS Nome_Orientador,
+    a.nome AS Nome_Aluno
+FROM
+    agenda_defesa ag
+    JOIN sala_defesa sd ON ag.Sala_Defesa_codigo_sala = sd.codigo_sala
+    JOIN professor p ON ag.Professor_CPF = p.CPF
+    JOIN alunos a ON ag.Alunos_matricula = a.matricula;
